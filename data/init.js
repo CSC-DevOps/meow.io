@@ -33,21 +33,21 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
     db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
         console.log(`${row.id} ${row.info}`);
     });
-   });
-
-  db.serialize(function()
-  {
-    console.log("Loading votes...")
-    var stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
-    let id = 1;
-    for( var line of lines )
-    {
-      stmt.run(id++, 1);
-    }
-
-    stmt.finalize();
-    console.log("Loading votes.")
   });
+
+  // db.serialize(function()
+  // {
+  //   console.log("Loading votes...")
+  //   var stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
+  //   let id = 1;
+  //   for( var line of lines )
+  //   {
+  //     stmt.run(id++, 1);
+  //   }
+
+  //   stmt.finalize();
+  //   console.log("Loading votes.")
+  // });
  
   db.close(function()
   {
