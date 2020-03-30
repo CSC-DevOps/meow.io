@@ -37,24 +37,24 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
     });
   });
 
-  // db.serialize(function()
-  // {
-  //   console.log("Loading votes...")
-  //   var stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
-  //   let id = 1;
-  //   for( var line of lines )
-  //   {
-  //     stmt.run(id++, 1);
-  //   }
-
-  //   stmt.finalize();
-  //   console.log("Loading votes.")
-  // });
+  db.serialize(function()
+  {
+    console.log("Loading votes...")
+    db.run("begin transaction");
+    var stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
+    let id = 1;
+    for( var line of lines )
+    {
+      stmt.run(id++, 1);
+    }
+    stmt.finalize();
+    db.run("commit");
+    console.log("Loaded votes.")
+  });
  
   db.close(function()
   {
     console.log("DB created");
-    process.exit();
   });
 
 })();
