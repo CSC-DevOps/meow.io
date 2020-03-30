@@ -19,10 +19,7 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
     db.run("CREATE TABLE facts (info TEXT)");
     db.run("CREATE TABLE votes (catId INT, votes INT)");
     db.run("CREATE TABLE cats (img TEXT)");
-  });
-
-  db.serialize(function()
-  {
+ 
     console.log("Loading facts....");
     // Load facts
     var stmt = db.prepare("INSERT INTO facts VALUES (?)");
@@ -31,8 +28,12 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
       stmt.run(line);
     }
     stmt.finalize();
-    console.log("Loaded facts.");
-  });
+ 
+    console.log("Reading facts...")
+    db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
+        console.log(`${row.id} ${row.info}`);
+    });
+   });
 
   db.serialize(function()
   {
@@ -47,10 +48,6 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
     stmt.finalize();
     console.log("Loading votes.")
   });
-    // console.log("Reading facts...")
-    // db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
-    //     console.log(`${row.id} ${row.info}`);
-    // });
  
   db.close(function()
   {
