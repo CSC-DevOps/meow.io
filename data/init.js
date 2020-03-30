@@ -34,10 +34,10 @@ db.serialize(function() {
 
   stmt.finalize();
 
-  console.log("Reading facts...")
-  db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
-      console.log(`${row.id} ${row.info}`);
-  });
+  // console.log("Reading facts...")
+  // db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
+  //     console.log(`${row.id} ${row.info}`);
+  // });
 
 
 
