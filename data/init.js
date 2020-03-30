@@ -13,15 +13,18 @@ db.serialize(function() {
   db.run("CREATE TABLE cats (img TEXT)");
 
   // Load facts
+  console.log("Loading cat facts...")
   var stmt = db.prepare("INSERT INTO facts VALUES (?)");
   const data = fs.readFileSync(path.resolve(__dirname, "catfacts.txt"), 'utf8');
   const lines = data.split("\n");
+
   for( var line of lines ) {
     line=line.substring(1, line.length-2);
     stmt.run(line);
   }
   stmt.finalize();
 
+  console.log("Loading votes...")
   stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
   let id = 1;
   for( var line of lines )
@@ -31,6 +34,7 @@ db.serialize(function() {
 
   stmt.finalize();
 
+  console.log("Reading facts...")
   db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
       console.log(`${row.id} ${row.info}`);
   });
