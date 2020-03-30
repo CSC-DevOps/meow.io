@@ -39,4 +39,8 @@ db.serialize(function() {
 
 });
  
-db.close();
+db.close(function()
+{
+  console.log("DB created");
+  process.exit();
+});
