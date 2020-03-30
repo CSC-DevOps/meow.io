@@ -6,45 +6,56 @@ console.log(dbPath);
 
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE);
- 
-db.serialize(function() {
-  db.run("CREATE TABLE facts (info TEXT)");
-  db.run("CREATE TABLE votes (catId INT, votes INT)");
-  db.run("CREATE TABLE cats (img TEXT)");
 
-  // Load facts
+( async () => 
+{
+
   console.log("Loading cat facts...")
-  var stmt = db.prepare("INSERT INTO facts VALUES (?)");
   const data = fs.readFileSync(path.resolve(__dirname, "catfacts.txt"), 'utf8');
   const lines = data.split("\n");
 
-  for( var line of lines ) {
-    line=line.substring(1, line.length-2);
-    stmt.run(line);
-  }
-  stmt.finalize();
+  db.serialize(function() {
+    console.log("Creating tables...")
+    db.run("CREATE TABLE facts (info TEXT)");
+    db.run("CREATE TABLE votes (catId INT, votes INT)");
+    db.run("CREATE TABLE cats (img TEXT)");
+  });
 
-  console.log("Loading votes...")
-  stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
-  let id = 1;
-  for( var line of lines )
+  db.serialize(function()
   {
-    stmt.run(id++, 1);
-  }
+    console.log("Loading facts....");
+    // Load facts
+    var stmt = db.prepare("INSERT INTO facts VALUES (?)");
+    for( var line of lines ) {
+      line=line.substring(1, line.length-2);
+      stmt.run(line);
+    }
+    stmt.finalize();
+    console.log("Loaded facts.");
+  });
 
-  stmt.finalize();
+  db.serialize(function()
+  {
+    console.log("Loading votes...")
+    var stmt = db.prepare("INSERT INTO votes VALUES (?,?)");
+    let id = 1;
+    for( var line of lines )
+    {
+      stmt.run(id++, 1);
+    }
 
-  // console.log("Reading facts...")
-  // db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
-  //     console.log(`${row.id} ${row.info}`);
-  // });
-
-
-
-});
+    stmt.finalize();
+    console.log("Loading votes.")
+  });
+    // console.log("Reading facts...")
+    // db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
+    //     console.log(`${row.id} ${row.info}`);
+    // });
  
-db.close(function()
-{
-  console.log("DB created");
-  process.exit();
-});
+  db.close(function()
+  {
+    console.log("DB created");
+    process.exit();
+  });
+
+})();
