@@ -22,12 +22,14 @@ var db = new sqlite3.Database(dbPath, sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRI
  
     console.log("Loading facts....");
     // Load facts
+    db.run("begin transaction");
     var stmt = db.prepare("INSERT INTO facts VALUES (?)");
     for( var line of lines ) {
       line=line.substring(1, line.length-2);
       stmt.run(line);
     }
     stmt.finalize();
+    db.run("commit");
  
     console.log("Reading facts...")
     db.each("SELECT rowid AS id, info FROM facts", function(err, row) {
