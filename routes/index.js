@@ -5,7 +5,7 @@ const db = require('../data/db');
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  res.status(500).render('index', { title: 'meow.io', recentUploads: await db.recentCats(5), bestFacts: (await db.votes()).slice(0,100) });
+  res.render('index', { title: 'meow.io', recentUploads: await db.recentCats(5), bestFacts: (await db.votes()).slice(0,100) });
 });
 
 module.exports = router;
