@@ -18,7 +18,7 @@ router.post('/', upload.single('image'), function (req, res) {
   if (req.file.fieldname === 'image') {
     fs.readFile(req.file.path, async function (err, data) {
       if (err) throw err;
-      var img = new Buffer(data).toString('base64');
+      var img = new Buffer.from(data).toString('base64');
 
       await db.cat(img);
       res.send('Ok');
