@@ -5,7 +5,7 @@ const db = require('../data/db');
 const redis = require('redis');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
 
   //let client = redis.createClient(6379, '127.0.0.1', {});
   res.render('index', 
